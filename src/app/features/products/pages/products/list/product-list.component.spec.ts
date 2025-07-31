@@ -1,92 +1,108 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ProductFormComponent } from '../form/product-form.component';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ProductListComponent } from './product-list.component';
 import { ProductService } from '../../../../../core/services/product.service';
 import { of } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
+// Mock Data
+const mockProducts = [
+  {
+    id: '1',
+    name: 'Test Product 1',
+    description: 'Description 1',
+    logo: 'logo1.png',
+    date_release: '2022-01-01',
+    date_revision: '2022-02-01'
+  },
+  {
+    id: '2',
+    name: 'Test Product 2',
+    description: 'Description 2',
+    logo: 'logo2.png',
+    date_release: '2022-03-01',
+    date_revision: '2022-04-01'
+  }
+];
 
-describe('ProductFormComponent (Jest)', () => {
-  let component: ProductFormComponent;
-  let fixture: ComponentFixture<ProductFormComponent>;
+// Mock Services
+const mockProductService = {
+  getAll: jest.fn().mockReturnValue(of({ data: mockProducts })),
+  delete: jest.fn().mockReturnValue(of({ success: true }))
+};
 
-  const mockProductService = {
-    getById: jest.fn(),
-    checkIdExists: jest.fn().mockReturnValue(of(false)),
-    create: jest.fn().mockReturnValue(of({})),
-    update: jest.fn().mockReturnValue(of({})),
-  };
+describe('ProductListComponent', () => {
+  let component: ProductListComponent;
+  let fixture: ComponentFixture<ProductListComponent>;
+  let productService: ProductService;
 
-  const mockRouter = {
-    navigateByUrl: jest.fn(),
-  };
-
-  const mockActivatedRoute = {
-    snapshot: {
-      paramMap: {
-        get: jest.fn().mockReturnValue(null),
-      },
-    },
-  };
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ProductFormComponent, ReactiveFormsModule],
-      providers: [
-        { provide: ProductService, useValue: mockProductService },
-        { provide: Router, useValue: mockRouter },
-        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        ProductListComponent,
+        RouterTestingModule,
+        CommonModule,
+        FormsModule
       ],
+      providers: [
+        { provide: ProductService, useValue: mockProductService }
+      ]
     }).compileComponents();
+  }));
 
-    fixture = TestBed.createComponent(ProductFormComponent);
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ProductListComponent);
     component = fixture.componentInstance;
+    productService = TestBed.inject(ProductService);
     fixture.detectChanges();
   });
 
-  it('should create the form with default values', () => {
-    expect(component.form).toBeDefined();
-    expect(component.form.get('name')?.value).toBe('');
+  it('should create', () => {
+    expect(component).toBeTruthy();
   });
 
-  it('should mark name as invalid if too short', () => {
-    component.form.get('name')?.setValue('abc');
-    expect(component.form.get('name')?.invalid).toBe(true);
+  it('should load products on init', () => {
+    expect(component.products()).toEqual(mockProducts);
+    expect(component.loading()).toBe(false);
   });
 
-  it('should mark description as invalid if too short', () => {
-    component.form.get('description')?.setValue('desc');
-    expect(component.form.get('description')?.invalid).toBe(true);
+  it('should filter products by search term', () => {
+    component.searchTerm.set('product 1');
+    const filtered = component.filteredProducts();
+    expect(filtered.length).toBe(1);
+    expect(filtered[0].name).toBe('Test Product 1');
   });
 
-  it('should call create on submit when not in edit mode and form is valid', () => {
-    component.form.patchValue({
-      id: 'prod123',
-      name: 'Producto válido',
-      description: 'Una descripción lo suficientemente larga',
-      logo: 'http://logo.png',
-      date_release: '2025-01-01',
-      date_revision: '2026-01-01',
-    });
-
-    component.onSubmit();
-
-    expect(mockProductService.create).toHaveBeenCalledWith(expect.objectContaining({ id: 'prod123' }));
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/');
+  it('should change page size and reset current page', () => {
+    component.currentPage.set(2);
+    component.changePageSize(10);
+    expect(component.pageSize()).toBe(10);
+    expect(component.currentPage()).toBe(1);
   });
 
-  it('should NOT call create if form is invalid', () => {
-    component.form.patchValue({
-      id: '',
-      name: '',
-      description: '',
-      logo: '',
-      date_release: '',
-      date_revision: '',
-    });
+  it('should go to previous and next page', () => {
+    component.pageSize.set(1);
+    component.currentPage.set(2);
+    component.prevPage();
+    expect(component.currentPage()).toBe(1);
 
-    component.onSubmit();
+    component.nextPage();
+    expect(component.currentPage()).toBe(2);
+  });
 
-    expect(mockProductService.create).not.toHaveBeenCalled();
+  it('should show modal and select product for deletion', () => {
+    component.delete('1');
+    expect(component.showModal).toBe(true);
+    expect(component.productSelected.id).toBe('1');
+  });
+
+  it('should call deleteProduct and reload', () => {
+    jest.spyOn(component, 'loadProducts');
+    component.productSelected = mockProducts[0];
+    component.deleteProduct();
+    expect(mockProductService.delete).toHaveBeenCalledWith('1');
+    expect(component.showModal).toBe(false);
+    expect(component.loadProducts).toHaveBeenCalled();
   });
 });

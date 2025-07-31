@@ -15,12 +15,12 @@ describe('ProductService', () => {
       providers: [ProductService],
     });
 
-    service = TestBed.inject(ProductService);
     httpMock = TestBed.inject(HttpTestingController);
+    service = TestBed.inject(ProductService);
   });
 
   afterEach(() => {
-    httpMock.verify(); // Verifica que no haya llamadas pendientes
+    httpMock.verify(); // Asegura que no haya solicitudes pendientes
   });
 
   it('should be created', () => {
@@ -28,13 +28,19 @@ describe('ProductService', () => {
   });
 
   it('getAll should GET list of products', () => {
-    const dummyProducts: Product[] = [
-      { id: '1', name: 'Prod 1', description: 'Desc 1', logo: 'logo1.png', date_release: '2022-01-01', date_revision: '2022-02-01' },
-      { id: '2', name: 'Prod 2', description: 'Desc 2', logo: 'logo2.png', date_release: '2022-03-01', date_revision: '2022-04-01' },
+    const dummyProducts: Product[] =  [
+        {
+            "id": "PROD1",
+            "name": "TOMATES",
+            "description": "TOMATES DEL CAMPO A LA BOCA",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/8/88/Bright_red_tomato_and_cross_section02.jpg",
+            "date_release": "2025-07-31",
+            "date_revision": "2026-07-31"
+        }
     ];
 
     service.getAll().subscribe(res => {
-      expect(res.data.length).toBe(2);
+      expect(res.data.length).toBe(1);
       expect(res.data).toEqual(dummyProducts);
     });
 
@@ -44,19 +50,33 @@ describe('ProductService', () => {
   });
 
   it('getById should GET a single product by id', () => {
-    const dummyProduct: Product = { id: '1', name: 'Prod 1', description: 'Desc 1', logo: 'logo1.png', date_release: '2022-01-01', date_revision: '2022-02-01' };
+    const dummyProduct: Product = {
+            "id": "PROD1",
+            "name": "TOMATES",
+            "description": "TOMATES DEL CAMPO A LA BOCA",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/8/88/Bright_red_tomato_and_cross_section02.jpg",
+            "date_release": "2025-07-31",
+            "date_revision": "2026-07-31"
+        };
 
-    service.getById('1').subscribe(res => {
+    service.getById('PROD1').subscribe(res => {
       expect(res.data).toEqual(dummyProduct);
     });
 
-    const req = httpMock.expectOne(`${baseUrl}/1`);
+    const req = httpMock.expectOne(`${baseUrl}/PROD1`);
     expect(req.request.method).toBe('GET');
     req.flush({ data: dummyProduct });
   });
 
   it('create should POST a new product', () => {
-    const newProduct: Product = { id: '3', name: 'Prod 3', description: 'Desc 3', logo: 'logo3.png', date_release: '2022-05-01', date_revision: '2022-06-01' };
+    const newProduct: Product = {
+      id: 'prodaaaa3',
+      name: 'Prod 3',
+      description: 'Desc 3',
+      logo: 'logo3.png',
+      date_release: '2022-05-01',
+      date_revision: '2022-06-01'
+    };
 
     service.create(newProduct).subscribe(res => {
       expect(res).toBeTruthy();
@@ -69,13 +89,19 @@ describe('ProductService', () => {
   });
 
   it('update should PUT updated product data', () => {
-    const updatedProduct = { name: 'Prod Updated', description: 'Desc Updated', logo: 'logo-updated.png', date_release: '2022-05-01', date_revision: '2022-06-01' };
+    const updatedProduct = {
+      name: 'Prod Updated',
+      description: 'Desc Updated',
+      logo: 'logo-updated.png',
+      date_release: '2022-05-01',
+      date_revision: '2022-06-01'
+    };
 
-    service.update('1', updatedProduct).subscribe(res => {
+    service.update('PROD1', updatedProduct).subscribe(res => {
       expect(res).toBeTruthy();
     });
 
-    const req = httpMock.expectOne(`${baseUrl}/1`);
+    const req = httpMock.expectOne(`${baseUrl}/PROD1`);
     expect(req.request.method).toBe('PUT');
     expect(req.request.body).toEqual(updatedProduct);
     req.flush({ success: true });

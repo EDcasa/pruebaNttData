@@ -1,9 +1,8 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ProductService } from '../../../../../core/services/product.service';
 import { FormsModule } from '@angular/forms';
-import { ProductCardComponent } from '../../../components/card/product-card.component';
 import { Product } from '../../../../../core/models/product.model';
 import { ConfirmationModalComponent } from '../../../../../shared/components/modal/confirmation-modal.component';
 

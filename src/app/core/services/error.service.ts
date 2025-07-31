@@ -30,6 +30,7 @@ export class ErrorService {
   }
 
   private showError(message: string): void {
+    console.log(`Error: ${message}`);
     // this.snackBar.open(message, 'Cerrar', {
     //   duration: 5000,
     //   panelClass: ['error-snackbar']
