@@ -1,0 +1,9 @@
+<div class="modal-backdrop" *ngIf="visible">
+    <div class="modal-content">
+        <p>{{ message }}</p>
+        <div class="buttons">
+            <button class="btn-secondary" (click)="cancel()">Cancelar</button>
+            <button class="btn-primary" (click)="confirm()">{{ confirmText }}</button>
+        </div>
+    </div>
+</div>

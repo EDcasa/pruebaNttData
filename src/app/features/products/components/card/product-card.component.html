@@ -1,0 +1,35 @@
+<div class="card">
+    <img [src]="product.logo" alt="{{ product.name }}" class="logo" />
+    <h2>{{ product.name }}</h2>
+    <p>{{ product.description }}</p>
+    <p><strong>Disponible desde:</strong> {{ product.date_release }}</p>
+    <p><strong>Revisión:</strong> {{ product.date_revision }}</p>
+
+    <app-product-menu
+        (edit)="edit()"
+        (delete)="deleteProduct()"
+        ></app-product-menu>
+    <!-- <div class="menu">
+        <button (click)="toggleMenu()">⋮</button>
+        <div class="dropdown" *ngIf="menuOpen">
+            <button (click)="edit()">Editar</button>
+            <button (click)="confirmDelete()">Eliminar</button>
+        </div>
+    </div> -->
+
+    <!-- <div class="modal" *ngIf="showModal">
+        <div class="modal-content">
+            <p>¿Estás seguro que deseas eliminar este producto?</p>
+            <button (click)="deleteProduct()">Eliminar</button>
+            <button (click)="showModal = false">Cancelar</button>
+        </div>
+    </div> -->
+    <app-confirmation-modal
+    [visible]="showModal"
+    [message]="'¿Deseas eliminar este producto?'"
+    [confirmText]="'Eliminar'"
+    (onConfirm)="deleteProduct()"
+    (onCancel)="showModal = false"
+    ></app-confirmation-modal>
+</div>
+

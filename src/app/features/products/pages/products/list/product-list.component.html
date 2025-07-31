@@ -1,0 +1,74 @@
+<div class="container">
+
+
+  <div class="controls">
+    <input class="input-search" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"
+      placeholder="Buscar..." />
+    <button class="btn-primary" (click)="goToAdd()">Agregar</button>
+  </div>
+
+  <div *ngIf="loading()" class="skeletons">
+    <div class="skeleton" *ngFor="let i of [].constructor(pageSize())"></div>
+  </div>
+  <div class="container container-table" *ngIf="!loading() && filteredProducts().length === 0">
+    <p class="no-results">No se encontraron productos</p>
+  </div>
+  <div class="container container-table" *ngIf="!loading() && filteredProducts().length > 0">
+    <table *ngIf="!loading()" class="product-table">
+      <thead>
+        <tr>
+          <th>Logo</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Fecha Liberación</th>
+          <th>Fecha Revisión</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of paginatedProducts(); let i = index">
+          <td><img [src]="product.logo" alt="logo" class="logo-img" /></td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+          <td>{{ product.date_release }}</td>
+          <td>{{ product.date_revision }}</td>
+          <td class="action-cell">
+            <div class="menu-wrapper">
+              <button (click)="toggleMenu(i)" class="menu-button" aria-label="Acciones">
+                <strong>
+                  &#8942;
+                </strong>
+              </button>
+
+              <ul *ngIf="menuOpenIndex() === i" class="menu-dropdown">
+                <li (click)="goToEdit(product.id)">✏️ Editar</li>
+                <li (click)="delete(product.id)">🗑️ Eliminar</li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+     <div class="pagination" *ngIf="filteredProducts().length > pageSize()">
+        <button (click)="prevPage()" [disabled]="currentPage() === 1">Anterior</button>
+        <span>Página {{ currentPage() }} de {{ totalPages() }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage() === totalPages()">Siguiente</button>
+      </div>
+      
+</div>
+
+
+<div class="controls">
+
+  <span>{{ filteredProducts().length }} Resultados</span>
+  <label>
+    <select class="select-nop" [ngModel]="pageSize()" (ngModelChange)="pageSize.set($event)">
+      <option *ngFor="let size of [5, 10, 20]" [value]="size">{{ size }}</option>
+    </select>
+  </label>
+</div>
+<app-confirmation-modal [visible]="showModal"
+  [message]="'¿Estas seguro de eliminar el producto ' + productSelected?.name + '?'" [confirmText]="'Confirmar'"
+  (onConfirm)="deleteProduct()" (onCancel)="showModal = false"></app-confirmation-modal>
+</div>

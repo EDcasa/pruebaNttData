@@ -25,3 +25,17 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+
+## Dependencies
+ng add @briebug/jest-schematic
+
+## Jest Configuration
+npm uninstall karma jasmine-core karma-chrome-launcher karma-jasmine karma-jasmine-html-reporter
+npm install --save-dev jest jest-preset-angular @types/jest ts-jest
+
+## Running Tests with Jest
+
+Run `npm test` to execute the unit tests via Jest.
+Run `npm run test:watch` to run tests in watch mode.
+Run `npm run test:coverage` to generate a coverage report.

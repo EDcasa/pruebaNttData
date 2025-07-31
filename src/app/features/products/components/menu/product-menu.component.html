@@ -1,0 +1,15 @@
+<div class="menu">
+    <button (click)="toggleMenu()">⋮</button>
+    <div class="dropdown" *ngIf="menuOpen">
+        <button (click)="onEdit()">Editar</button>
+        <button (click)="confirmDelete()">Eliminar</button>
+    </div>
+</div>
+
+<div class="modal" *ngIf="showModal">
+    <div class="modal-content">
+        <p>¿Estás seguro que deseas eliminar este producto?</p>
+        <button (click)="onDelete()">Eliminar</button>
+        <button (click)="showModal = false">Cancelar</button>
+    </div>
+</div>

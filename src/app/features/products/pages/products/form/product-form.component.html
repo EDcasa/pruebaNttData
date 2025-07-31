@@ -1,0 +1,76 @@
+<div class="form-container">
+    <h1 class="text-center">{{titlePage()}}</h1>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+          <div class="form-field">
+            <label>ID</label>
+            <input formControlName="id" [readonly]="isEdit()" [class.input-error]="form.get('id')?.invalid && form.get('id')?.touched" />
+            <div class="error" *ngIf="form.get('id')?.invalid && form.get('id')?.touched">ID inválido o ya existe</div>
+          </div>
+
+          <div class="form-field">
+            <label>Nombre</label>
+            <input formControlName="name" [class.input-error]="form.get('name')?.invalid && form.get('name')?.touched" />
+            <div class="error" *ngIf="form.get('name')?.invalid && form.get('name')?.touched">Nombre requerido</div>
+          </div>
+
+          <div class="form-field">
+            <label>Descripción</label>
+            <input formControlName="description" [class.input-error]="form.get('description')?.invalid && form.get('description')?.touched" />
+            <div class="error" *ngIf="form.get('description')?.invalid && form.get('description')?.touched">Descripción requerida</div>
+          </div>
+
+          <div class="form-field">
+            <label>Logo (URL)</label>
+            <input formControlName="logo" [class.input-error]="form.get('logo')?.invalid && form.get('logo')?.touched" />
+            <div class="error" *ngIf="form.get('logo')?.invalid && form.get('logo')?.touched">Logo requerido</div>
+          </div>
+
+          <div class="form-field">
+            <label>Fecha de Liberación</label>
+            <input type="date" formControlName="date_release" [class.input-error]="form.get('date_release')?.invalid && form.get('date_release')?.touched" (blur)="onChangeDateRelease()"/>
+            <div class="error" *ngIf="form.get('date_release')?.invalid && form.get('date_release')?.touched">Fecha requerida</div>
+          </div>
+
+          <div class="form-field">
+            <label>Fecha de Revisión</label>
+            <input formControlName="date_revision" readonly [disabled]="true" />
+          </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn-secondary" type="button" (click)="form.reset()">Reiniciar</button>
+            <button class="btn-primary" type="submit" [disabled]="form.invalid">{{ isEdit() ? 'Actualizar' : 'Enviar' }}</button>
+        </div>
+      </form>
+    <!-- <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <label>ID</label>
+        <input formControlName="id" [readonly]="isEdit()"   [ngClass]="{ 'input-error': id.invalid && id.touched }"/>
+        <div class="error" *ngIf="id.invalid && id.touched">ID inválido o ya existe</div>
+
+        <label>Nombre</label>
+        <input formControlName="name" [ngClass]="{ 'input-error': name.invalid && name.touched }"/>
+        <div class="error" *ngIf="name.invalid && name.touched">Debe tener entre 5 y 100 caracteres</div>
+
+        <label>Descripción</label>
+        <textarea formControlName="description" [ngClass]="{ 'input-error': description.invalid && description.touched }"></textarea>
+        <div class="error" *ngIf="description.invalid && description.touched">Debe tener entre 10 y 200 caracteres</div>
+
+        <label>Logo</label>
+        <input formControlName="logo" [ngClass]="{ 'input-error': logo.invalid && logo.touched }"/>
+        <div class="error" *ngIf="logo.invalid && logo.touched">Requerido</div>
+
+        <label>Fecha de Liberación</label>
+        <input type="date" formControlName="date_release" [ngClass]="{ 'input-error': date_release.invalid && date_release.touched }"/>
+        <div class="error" *ngIf="date_release.invalid && date_release.touched">Fecha inválida</div>
+
+        <label>Fecha de Revisión</label>
+        <input type="date" formControlName="date_revision" [ngClass]="{ 'input-error': date_revision.invalid && date_revision.touched }"/>
+        <div class="error" *ngIf="date_revision.invalid && date_revision.touched">Debe ser 1 año después</div>
+
+        <div class="buttons">
+            <button class="btn-secondary" type="button" (click)="form.reset()">Reiniciar</button>
+            <button class="btn-primary" type="submit" [disabled]="form.invalid">{{ isEdit() ? 'Actualizar' : 'Enviar' }}</button>
+        </div>
+    </form> -->
+</div>
